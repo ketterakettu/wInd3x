@@ -35,6 +35,7 @@ func main() {
 	decryptCmd.Flags().StringVarP(&decryptRecovery, "recovery", "r", "", "EXPERIMENTAL: Path to temporary file used for recovery when restarting the transfer")
 	restoreCmd.Flags().BoolVarP(&restoreFull, "full", "f", false, "Perform full restore, including repartition and bootloader install. If true, you will have to manually reformat the main partition as FAT32, otherwise the device will seem bricked.")
 	restoreCmd.Flags().StringVarP(&restoreVersion, "version", "V", "current", "Restore to some older version instead of 'current' from Apple. Use 'list' to show available.")
+	restoreCmd.Flags().StringVar(&restoreFirmware, "firmware", "", "Path to local firmware file (.MSE) to flash")
 	mseExtractCmd.Flags().StringVarP(&extractDir, "out", "o", "", "Directory to extract to (default: current working directory)")
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().BoolVarP(&verboseLog, "verbose", "v", false, "Enable verbose debug logging")

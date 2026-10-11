@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -16,6 +17,7 @@ import (
 
 var restoreFull bool
 var restoreVersion string
+var restoreFirmware string
 
 var restoreCmd = &cobra.Command{
 	Use:   "restore",
@@ -51,13 +53,22 @@ var restoreCmd = &cobra.Command{
 			}
 		}
 
-		firmware, err := cache.Get(&app.App, cache.PayloadKindFirmwareUpstream)
-		if err != nil {
-			return fmt.Errorf("could not get firmware: %w", err)
+		var firmware []byte
+		if restoreFirmware != "" {
+			slog.Info("Loading local firmware file...", "path", restoreFirmware)
+			firmware, err = os.ReadFile(restoreFirmware)
+			if err != nil {
+				return fmt.Errorf("could not read firmware file: %w", err)
+			}
+		} else {
+			firmware, err = cache.Get(&app.App, cache.PayloadKindFirmwareUpstream)
+			if err != nil {
+				return fmt.Errorf("could not get firmware: %w", err)
+			}
 		}
 
 		var bootloader []byte
-		if hasBootloader {
+		if hasBootloader && restoreFull {
 			bootloader, err = cache.Get(&app.App, cache.PayloadKindBootloaderUpstream)
 			if err != nil {
 				return fmt.Errorf("could not get bootloader: %s", err)
